@@ -1,10 +1,17 @@
 from os import listdir, mkdir, path
-from PIL import Image, ImageDraw
+from PIL import Image
 from tqdm import tqdm
 import numpy as np
 
-FOLDER_DIR = "/home/cytech/Pictures/BDA"  # the folder with images
+# the folder with images
+FOLDER_DIR = "/home/cytech/Pictures/BDA"
+# the route of the background image
 BACKGOUND_IMAGE_ROUTE = "./pexels-david-bartus-1166209.jpg"
+MINIMUM_ANGLE_COLOR = 70
+MAXIMUM_ANGLE_COLOR = 130
+MINIMUM_SATURATION = 0.20 * 255
+MAXIMUM_SATURATION = 1.00 * 255
+MINIMUM_BRIGHTNESS = 0.60 * 255
 
 if not path.exists("images"):
     mkdir("images")
@@ -52,8 +59,11 @@ for image_str in tqdm(listdir(FOLDER_DIR)):
     bg_image_copy = np.asarray(bg_image_copy)
 
     # find green pixels
-    mask = (image[..., 0] < 130) & (
-        image[..., 0] > 70) & (image[..., 1] > 0.70)
+    mask = (image[..., 0] < MAXIMUM_ANGLE_COLOR) & (
+        image[..., 0] > MINIMUM_ANGLE_COLOR) & (
+        image[..., 1] > MINIMUM_SATURATION) & (
+        image[..., 1] < MAXIMUM_SATURATION) & (
+        image[..., 2] > MINIMUM_BRIGHTNESS)
 
     image_with_bg = image.copy()
     image_with_bg[mask] = bg_image_copy[mask]
